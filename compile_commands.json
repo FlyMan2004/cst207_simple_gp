@@ -1,0 +1,163 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-pipe",
+      "-std=gnu++23",
+      "-fsized-deallocation",
+      "-Wall",
+      "-Wextra",
+      "-fprebuilt-module-path=.",
+      "-fsanitize=address,undefined",
+      "-Og",
+      "-fno-omit-frame-pointer",
+      "-gdwarf-5",
+      "-glldb",
+      "-c",
+      "main.cxx",
+      "-o",
+      "main.o"
+    ],
+    "directory": "/home/zijian/learn/cst207_simple_gp",
+    "file": "/home/zijian/learn/cst207_simple_gp/main.cxx",
+    "output": "/home/zijian/learn/cst207_simple_gp/main.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-pipe",
+      "-std=gnu++23",
+      "-fsized-deallocation",
+      "-Wall",
+      "-Wextra",
+      "-fprebuilt-module-path=.",
+      "-fsanitize=address,undefined",
+      "-Og",
+      "-fno-omit-frame-pointer",
+      "-gdwarf-5",
+      "-glldb",
+      "--precompile",
+      "base.cppm",
+      "-o",
+      "base.pcm"
+    ],
+    "directory": "/home/zijian/learn/cst207_simple_gp",
+    "file": "/home/zijian/learn/cst207_simple_gp/base.cppm",
+    "output": "/home/zijian/learn/cst207_simple_gp/base.pcm"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-pipe",
+      "-std=gnu++23",
+      "-fsized-deallocation",
+      "-Wall",
+      "-Wextra",
+      "-fprebuilt-module-path=.",
+      "-fsanitize=address,undefined",
+      "-Og",
+      "-fno-omit-frame-pointer",
+      "-gdwarf-5",
+      "-glldb",
+      "--precompile",
+      "Algorithms.cppm",
+      "-o",
+      "Algorithms.pcm"
+    ],
+    "directory": "/home/zijian/learn/cst207_simple_gp",
+    "file": "/home/zijian/learn/cst207_simple_gp/Algorithms.cppm",
+    "output": "/home/zijian/learn/cst207_simple_gp/Algorithms.pcm"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-pipe",
+      "-std=gnu++23",
+      "-fsized-deallocation",
+      "-Wall",
+      "-Wextra",
+      "-fprebuilt-module-path=.",
+      "-fsanitize=address,undefined",
+      "-Og",
+      "-fno-omit-frame-pointer",
+      "-gdwarf-5",
+      "-glldb",
+      "--precompile",
+      "CSV.cppm",
+      "-o",
+      "CSV.pcm"
+    ],
+    "directory": "/home/zijian/learn/cst207_simple_gp",
+    "file": "/home/zijian/learn/cst207_simple_gp/CSV.cppm",
+    "output": "/home/zijian/learn/cst207_simple_gp/CSV.pcm"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-pipe",
+      "-std=gnu++23",
+      "-fsized-deallocation",
+      "-Wall",
+      "-Wextra",
+      "-fprebuilt-module-path=.",
+      "-fsanitize=address,undefined",
+      "-Og",
+      "-fno-omit-frame-pointer",
+      "-gdwarf-5",
+      "-glldb",
+      "--precompile",
+      "IO.cppm",
+      "-o",
+      "IO.pcm"
+    ],
+    "directory": "/home/zijian/learn/cst207_simple_gp",
+    "file": "/home/zijian/learn/cst207_simple_gp/IO.cppm",
+    "output": "/home/zijian/learn/cst207_simple_gp/IO.pcm"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-pipe",
+      "-std=gnu++23",
+      "-fsized-deallocation",
+      "-Wall",
+      "-Wextra",
+      "-fprebuilt-module-path=.",
+      "-fsanitize=address,undefined",
+      "-Og",
+      "-fno-omit-frame-pointer",
+      "-gdwarf-5",
+      "-glldb",
+      "--precompile",
+      "LibrarySystem.cppm",
+      "-o",
+      "LibrarySystem.pcm"
+    ],
+    "directory": "/home/zijian/learn/cst207_simple_gp",
+    "file": "/home/zijian/learn/cst207_simple_gp/LibrarySystem.cppm",
+    "output": "/home/zijian/learn/cst207_simple_gp/LibrarySystem.pcm"
+  },
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-pipe",
+      "-std=gnu++23",
+      "-fsized-deallocation",
+      "-Wall",
+      "-Wextra",
+      "-fprebuilt-module-path=.",
+      "-fsanitize=address,undefined",
+      "-Og",
+      "-fno-omit-frame-pointer",
+      "-gdwarf-5",
+      "-glldb",
+      "--precompile",
+      "UUID.cppm",
+      "-o",
+      "UUID.pcm"
+    ],
+    "directory": "/home/zijian/learn/cst207_simple_gp",
+    "file": "/home/zijian/learn/cst207_simple_gp/UUID.cppm",
+    "output": "/home/zijian/learn/cst207_simple_gp/UUID.pcm"
+  }
+]

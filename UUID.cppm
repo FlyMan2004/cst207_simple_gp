@@ -1,0 +1,92 @@
+module;
+#include <array>
+#include <format>
+#include <istream>
+#ifdef linux
+#include <uuid/uuid.h>
+#endif // linux
+export module UUID;
+
+export class UUID
+{
+  friend std::formatter<UUID>;
+private:
+  static constexpr size_t s_alignment = 16;
+  static constexpr size_t s_size = sizeof(::uuid_t);
+  alignas(s_alignment) std::array<uint8_t, s_size> m_uuid{};
+  [[nodiscard]] static auto generate() noexcept -> std::array<uint8_t, s_size>
+  {
+    std::array<uint8_t, s_alignment> uuid{};
+    ::uuid_generate_random(uuid.data());
+    return uuid;
+  }
+public:
+  struct gen_t {};
+  UUID() noexcept = default;
+  explicit UUID(gen_t) noexcept : m_uuid(generate()) {}
+  UUID(UUID const&) noexcept = default;
+  UUID(UUID&&) noexcept = default;
+  auto operator=(UUID const&) noexcept -> UUID& = default;
+  auto operator=(UUID&&) noexcept -> UUID& = default;
+  ~UUID() = default;
+
+  [[nodiscard]] friend auto operator<=>(UUID const&, UUID const&) noexcept = default;
+  friend auto operator<<(std::ostream& os, UUID const& uuid) -> std::ostream&;
+  friend auto operator>>(std::istream& is, UUID& uuid) -> std::istream&;
+};
+
+export template<>
+struct std::formatter<UUID>
+{
+  template<typename ParseContext>
+  constexpr static auto parse(ParseContext& ctx) noexcept { return ctx.begin(); }
+  template<typename FormatContext>
+  static auto format(UUID const& uuid, FormatContext& ctx) noexcept -> decltype(auto)
+  {
+    static constexpr size_t buffer_size = 48;
+    static constexpr size_t uuid_width = 36;
+    static constexpr decltype(auto) fmt_str = "{:02x}{:02x}{:02x}{:02x}-{:02x}{:02x}-{:02x}{:02x}-{:02x}{:02x}-{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}";
+    std::array<char, buffer_size> buffer{};
+    std::format_to_n(buffer.data(), buffer_size, fmt_str,
+      uuid.m_uuid[0], uuid.m_uuid[1], uuid.m_uuid[2], uuid.m_uuid[3],
+      uuid.m_uuid[4], uuid.m_uuid[5],
+      uuid.m_uuid[6], uuid.m_uuid[7],
+      uuid.m_uuid[8], uuid.m_uuid[9],
+      uuid.m_uuid[10], uuid.m_uuid[11], uuid.m_uuid[12], uuid.m_uuid[13], uuid.m_uuid[14], uuid.m_uuid[15]
+    );
+    return std::ranges::copy_n(buffer.data(), uuid_width, ctx.out()).out;
+  }
+};
+
+auto operator<<(std::ostream& os, UUID const& uuid) -> std::ostream&
+{ return os << std::format("{}", uuid); }
+auto operator>>(std::istream& is, UUID& uuid) -> std::istream&
+{
+  static constexpr size_t buffer_size = 48;
+  static constexpr size_t uuid_width = 36;
+  std::array<char, buffer_size> buffer{};
+  is.read(buffer.data(), uuid_width);
+  if (is.gcount() != uuid_width) {
+    // std::cerr << __LINE__ << ": " << __func__ << ": " << __FILE__ << ": " << "Error reading UUID\n";
+    is.setstate(std::ios_base::failbit);
+    return is;
+  }
+  if (buffer[8] != '-' || buffer[13] != '-' || buffer[18] != '-' || buffer[23] != '-') {
+    // std::cerr << __LINE__ << ": " << __func__ << ": " << __FILE__ << ": " << "Error reading UUID\n";
+    is.setstate(std::ios_base::failbit);
+    return is;
+  }
+  for (auto it = buffer.cbegin(); auto& value : uuid.m_uuid) {
+    if (*it == '-') std::advance(it, 1);
+    if (
+      auto const [p, ec] = std::from_chars(it, std::next(it, 2), value, 16);
+      ec != std::errc{}
+    ) {
+      // std::cerr << __LINE__ << ": " << __func__ << ": " << __FILE__ << ": " << "Error reading UUID\n";
+      is.setstate(std::ios_base::failbit);
+      return is;
+    }
+    std::advance(it, 2);
+  }
+  return is;
+}

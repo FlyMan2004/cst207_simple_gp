@@ -18,9 +18,9 @@
       "-o",
       "main.o"
     ],
-    "directory": "/home/zijian/learn/cst207_simple_gp",
-    "file": "/home/zijian/learn/cst207_simple_gp/main.cxx",
-    "output": "/home/zijian/learn/cst207_simple_gp/main.o"
+    "directory": "/home/rclee/learn/cst207_simple_gp",
+    "file": "/home/rclee/learn/cst207_simple_gp/main.cxx",
+    "output": "/home/rclee/learn/cst207_simple_gp/main.o"
   },
   {
     "arguments": [
@@ -41,9 +41,9 @@
       "-o",
       "base.pcm"
     ],
-    "directory": "/home/zijian/learn/cst207_simple_gp",
-    "file": "/home/zijian/learn/cst207_simple_gp/base.cppm",
-    "output": "/home/zijian/learn/cst207_simple_gp/base.pcm"
+    "directory": "/home/rclee/learn/cst207_simple_gp",
+    "file": "/home/rclee/learn/cst207_simple_gp/base.cppm",
+    "output": "/home/rclee/learn/cst207_simple_gp/base.pcm"
   },
   {
     "arguments": [
@@ -64,9 +64,9 @@
       "-o",
       "Algorithms.pcm"
     ],
-    "directory": "/home/zijian/learn/cst207_simple_gp",
-    "file": "/home/zijian/learn/cst207_simple_gp/Algorithms.cppm",
-    "output": "/home/zijian/learn/cst207_simple_gp/Algorithms.pcm"
+    "directory": "/home/rclee/learn/cst207_simple_gp",
+    "file": "/home/rclee/learn/cst207_simple_gp/Algorithms.cppm",
+    "output": "/home/rclee/learn/cst207_simple_gp/Algorithms.pcm"
   },
   {
     "arguments": [
@@ -87,9 +87,9 @@
       "-o",
       "CSV.pcm"
     ],
-    "directory": "/home/zijian/learn/cst207_simple_gp",
-    "file": "/home/zijian/learn/cst207_simple_gp/CSV.cppm",
-    "output": "/home/zijian/learn/cst207_simple_gp/CSV.pcm"
+    "directory": "/home/rclee/learn/cst207_simple_gp",
+    "file": "/home/rclee/learn/cst207_simple_gp/CSV.cppm",
+    "output": "/home/rclee/learn/cst207_simple_gp/CSV.pcm"
   },
   {
     "arguments": [
@@ -110,9 +110,9 @@
       "-o",
       "IO.pcm"
     ],
-    "directory": "/home/zijian/learn/cst207_simple_gp",
-    "file": "/home/zijian/learn/cst207_simple_gp/IO.cppm",
-    "output": "/home/zijian/learn/cst207_simple_gp/IO.pcm"
+    "directory": "/home/rclee/learn/cst207_simple_gp",
+    "file": "/home/rclee/learn/cst207_simple_gp/IO.cppm",
+    "output": "/home/rclee/learn/cst207_simple_gp/IO.pcm"
   },
   {
     "arguments": [
@@ -133,9 +133,9 @@
       "-o",
       "LibrarySystem.pcm"
     ],
-    "directory": "/home/zijian/learn/cst207_simple_gp",
-    "file": "/home/zijian/learn/cst207_simple_gp/LibrarySystem.cppm",
-    "output": "/home/zijian/learn/cst207_simple_gp/LibrarySystem.pcm"
+    "directory": "/home/rclee/learn/cst207_simple_gp",
+    "file": "/home/rclee/learn/cst207_simple_gp/LibrarySystem.cppm",
+    "output": "/home/rclee/learn/cst207_simple_gp/LibrarySystem.pcm"
   },
   {
     "arguments": [
@@ -156,8 +156,8 @@
       "-o",
       "UUID.pcm"
     ],
-    "directory": "/home/zijian/learn/cst207_simple_gp",
-    "file": "/home/zijian/learn/cst207_simple_gp/UUID.cppm",
-    "output": "/home/zijian/learn/cst207_simple_gp/UUID.pcm"
+    "directory": "/home/rclee/learn/cst207_simple_gp",
+    "file": "/home/rclee/learn/cst207_simple_gp/UUID.cppm",
+    "output": "/home/rclee/learn/cst207_simple_gp/UUID.pcm"
   }
 ]

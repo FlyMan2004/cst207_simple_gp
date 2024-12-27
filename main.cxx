@@ -129,7 +129,7 @@ void handle_admin_menu(LibrarySystem& system)
     if (system.modify_book(book_id, std::move(newDetails))) {
       std::cout << "Book modified successfully!\n";
     } else {
-      std::cout << "Book not found.\n";
+      std::cout << "Book not found or unavailable.\n";
     }
   };
   auto const remove_book = [&system, &input]
@@ -139,7 +139,7 @@ void handle_admin_menu(LibrarySystem& system)
     if (system.remove_book(book_id)) {
       std::cout << "Book removed successfully!\n";
     } else {
-      std::cout << "Book not found.\n";
+      std::cout << "Book not found or unavailable.\n";
     }
   };
   auto const view_user_transactions = [&system, &input]
@@ -362,7 +362,8 @@ try {
         input.prompt("Username: ").get(getline_t{username});
         input.prompt("Password: ").get(getline_t{password});
       }
-      bool const logged_in = system.login(username, password);
+      bool const as_admin = choice == 1;
+      bool const logged_in = system.login(username, password, as_admin);
       if (!logged_in) {
         std::cout << "Invalid username or password\n";
         continue;

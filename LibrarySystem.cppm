@@ -90,8 +90,8 @@ public:
   {}
   ~User() = default;
 
-  [[nodiscard]] auto authenticate(string_view input_passwd) const noexcept -> bool
-  { return m_password == input_passwd; }
+  [[nodiscard]] auto authenticate(string_view input_passwd, bool priviledge = false) const noexcept -> bool
+  { return this->is_admin() == priviledge && m_password == input_passwd; }
   [[nodiscard]] auto is_admin() const noexcept -> bool { return m_is_admin; }
   [[nodiscard]] auto get_username() const noexcept -> string_view { return m_username; }
 }; // class User
@@ -240,10 +240,10 @@ private:
   }
 
 public:
-  auto login(std::string_view username, std::string_view password) noexcept -> bool
+  auto login(std::string_view username, std::string_view password, bool priviledge = false) noexcept -> bool
   {
     for (auto const& user : m_users) {
-      if (user.get_username() == username && user.authenticate(password)) {
+      if (user.get_username() == username && user.authenticate(password, priviledge)) {
         m_curr_user = &user;
         return true;
       }
@@ -275,8 +275,9 @@ public:
     }
     size_t const index = Algorithms::binary_search(std::span{std::as_const(m_books)}, m_id, {}, &Book::get_id);
     using difference_type = std::vector<Book>::difference_type;
-    if (index != -1zu) {
-      m_books.erase(m_books.begin() + static_cast<difference_type>(index));
+    auto const book_it = m_books.begin() + static_cast<difference_type>(index);
+    if (book_it != m_books.end() && book_it->is_available()) {
+      m_books.erase(book_it);
       save_books();
       return true;
     }
@@ -391,9 +392,10 @@ public:
       throw LibraryException("Unauthorized access");
     }
     size_t const index = Algorithms::binary_search(std::span{std::as_const(m_books)}, book_id, {}, &Book::get_id);
-    if (index != -1zu) {
-
-      m_books[index] = std::move(new_book_info);
+    using difference_type = decltype(m_books)::difference_type;
+    auto const book_it = m_books.begin() + static_cast<difference_type>(index);
+    if (book_it != m_books.end() && book_it->is_available()) {
+      *book_it = std::move(new_book_info);
       save_books();
       return true;
     }

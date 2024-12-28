@@ -19,10 +19,10 @@ public:
   static constexpr decltype(auto) fmt_string = "{} {:>40} {:>30} {:>20} {:>15}";
 private:
   id_type m_id{};
-  bool m_available = true;
   string_type m_title{};
   string_type m_author{};
   string_type m_category{};
+  bool m_available = true;
 
 public:
   /* Rule of Five/Six */
@@ -413,7 +413,7 @@ public:
     }
     return nullptr;
   }
-    auto search_book_by_title(Book::string_type book_title) noexcept -> Book*
+    auto search_book_by_title(Book::string_type const& book_title) noexcept -> Book*
   {
     // Perform sort before searching
     Algorithms::quick_sort(std::span{m_books}, {}, &Book::get_title);

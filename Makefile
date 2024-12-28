@@ -1,8 +1,8 @@
 .PHONY: all clean
 
-CXX := clang++
-CXXFLAGS := -pipe -std=gnu++23 -fsized-deallocation -Wall -Wextra -fprebuilt-module-path=.
-LDFLAGS := -flto=thin -fuse-ld=lld -lstdc++exp -luuid
+CXX := clang++.exe
+CXXFLAGS := -pipe -std=gnu++23 -fsized-deallocation -Wall -Wextra -fprebuilt-module-path=. -flto=thin
+LDFLAGS := -fuse-ld=lld -lstdc++exp -luuid
 SANITIZER := -fsanitize=address,undefined
 DEBUGFLAGS := -Og -fno-omit-frame-pointer -gdwarf-5 -glldb
 RELEASEFLAGS := -O3 -march=native -DNDEBUG

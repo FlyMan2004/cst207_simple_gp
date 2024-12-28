@@ -4,20 +4,33 @@ module;
 #include <istream>
 #ifdef linux
 #include <uuid/uuid.h>
-#endif // linux
+#elifdef _WIN32
+#include <rpc.h>
+#endif // _WIN32
 export module UUID;
 
-export class UUID
+export namespace UUID_ns
 {
-  friend std::formatter<UUID>;
+class UUID
+{
+  friend std::formatter<::UUID_ns::UUID>;
 private:
+#ifdef linux
+  using native_uuid_t = ::uuid_t;
+#elifdef _WIN32
+  using native_uuid_t = ::UUID;
+#endif
   static constexpr size_t s_alignment = 16;
   static constexpr size_t s_size = sizeof(::uuid_t);
   alignas(s_alignment) std::array<uint8_t, s_size> m_uuid{};
   [[nodiscard]] static auto generate() noexcept -> std::array<uint8_t, s_size>
   {
     std::array<uint8_t, s_alignment> uuid{};
+  #ifdef linux
     ::uuid_generate_random(uuid.data());
+  #elifdef _WIN32
+    ::UuidCreate(reinterpret_cast<native_uuid_t*>(uuid.data()));
+  #endif
     return uuid;
   }
 public:
@@ -35,13 +48,15 @@ public:
   friend auto operator>>(std::istream& is, UUID& uuid) -> std::istream&;
 };
 
+} // namespace UUID_ns
+
 export template<>
-struct std::formatter<UUID>
+struct std::formatter<::UUID_ns::UUID>
 {
   template<typename ParseContext>
   constexpr static auto parse(ParseContext& ctx) noexcept { return ctx.begin(); }
   template<typename FormatContext>
-  static auto format(UUID const& uuid, FormatContext& ctx) noexcept -> decltype(auto)
+  static auto format(UUID_ns::UUID const& uuid, FormatContext& ctx) noexcept -> decltype(auto)
   {
     static constexpr size_t buffer_size = 48;
     static constexpr size_t uuid_width = 36;
@@ -54,13 +69,16 @@ struct std::formatter<UUID>
       uuid.m_uuid[8], uuid.m_uuid[9],
       uuid.m_uuid[10], uuid.m_uuid[11], uuid.m_uuid[12], uuid.m_uuid[13], uuid.m_uuid[14], uuid.m_uuid[15]
     );
-    return std::ranges::copy_n(buffer.data(), uuid_width, ctx.out()).out;
+    return std::copy_n(buffer.data(), uuid_width, ctx.out());
   }
 };
 
-auto operator<<(std::ostream& os, UUID const& uuid) -> std::ostream&
+namespace UUID_ns
+{
+
+auto operator<<(std::ostream& os, UUID_ns::UUID const& uuid) -> std::ostream&
 { return os << std::format("{}", uuid); }
-auto operator>>(std::istream& is, UUID& uuid) -> std::istream&
+auto operator>>(std::istream& is, UUID_ns::UUID& uuid) -> std::istream&
 {
   static constexpr size_t buffer_size = 48;
   static constexpr size_t uuid_width = 36;
@@ -76,7 +94,7 @@ auto operator>>(std::istream& is, UUID& uuid) -> std::istream&
     is.setstate(std::ios_base::failbit);
     return is;
   }
-  for (auto it = buffer.cbegin(); auto& value : uuid.m_uuid) {
+  for (auto it = buffer.data(); auto& value : uuid.m_uuid) {
     if (*it == '-') std::advance(it, 1);
     if (
       auto const [p, ec] = std::from_chars(it, std::next(it, 2), value, 16);
@@ -90,3 +108,5 @@ auto operator>>(std::istream& is, UUID& uuid) -> std::istream&
   }
   return is;
 }
+
+} // namespace UUID_ns

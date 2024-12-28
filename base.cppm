@@ -1,4 +1,5 @@
 module;
+#include <format>
 #include <stdexcept>
 #include <source_location>
 #include <stacktrace>

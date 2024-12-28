@@ -14,7 +14,7 @@ import CSV;
 export class Book
 {
 public:
-  using id_type = UUID;
+  using id_type = UUID_ns::UUID;
   using string_type = std::string;
   static constexpr decltype(auto) fmt_string = "{} {:>40} {:>30} {:>20} {:>15}";
 private:
@@ -104,7 +104,7 @@ private:
 public:
   using string_type = std::string;
   using string_view = std::string_view;
-  using receipt_id_type = UUID;
+  using receipt_id_type = UUID_ns::UUID;
   using username_type = User::string_type;
   using date_type = string_type;
   using book_id_type = Book::id_type;

@@ -335,16 +335,18 @@ public:
       Algorithms::bubble_sort(books.get());
     }
 
+
+ 
     std::cout << std::format(
-      "\n"
-      "\t\t\t\t=== Sorted Books ({}) ===\n",
+    "\n"
+      "{:>70}=== Sorted Books ({}) ===\n",
       sort_by
     );
     std::cout << std::format(
       Book::fmt_string,
       "ID", "Title", "Author", "Category", "Status"
     ) << '\n';
-    std::cout << std::format("{:->90}\n", "");
+    std::cout << std::format("{:->145}\n", "");
 
     for (const auto& book : books.get()) {
       std::cout << std::format(
@@ -373,7 +375,7 @@ public:
       Transaction::fmt_string,
       "Receipt", "User name", "Book ID", "Date", "Type"
     ) << '\n';
-    std::cout << std::format("{:->80}\n", "");
+    std::cout << std::format("{:->14}\n", "");
 
     for (const auto& trans : m_transactions) {
       std::cout << std::format(

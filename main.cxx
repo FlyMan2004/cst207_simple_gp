@@ -397,16 +397,16 @@ try {
 static auto test_uuid() -> int
 {
   std::cout << "=== Testing UUID Generation ===\n";
-  std::vector<UUID> uuids;
+  std::vector<UUID_ns::UUID> uuids;
   for (auto const _ : std::views::iota(0, 10)) {
-    uuids.emplace_back(UUID::gen_t{});
+    uuids.emplace_back(UUID_ns::UUID::gen_t{});
   }
   std::ranges::sort(uuids);
   for (auto const& uuid : uuids) {
     std::cout << std::format("UUID: {}\n", uuid);
   }
   std::cout << "=== Testing UUID Input ===\n";
-  UUID uuid;
+  UUID_ns::UUID uuid;
   std::cin >> uuid;
   std::cout << "UUID: " << uuid << '\n';
   return 0;

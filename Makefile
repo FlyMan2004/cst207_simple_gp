@@ -1,6 +1,6 @@
 .PHONY: all clean
 
-CXX := clang++.exe
+CXX := clang++
 CXXFLAGS := -pipe -std=gnu++23 -fsized-deallocation -Wall -Wextra -fprebuilt-module-path=. -flto=thin
 LDFLAGS := -fuse-ld=lld -lstdc++exp -luuid
 SANITIZER := -fsanitize=address,undefined

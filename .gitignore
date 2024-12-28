@@ -3,3 +3,4 @@
 **/*.pcm
 **/*.bak
 **/.cache
+**/compile_commands.json

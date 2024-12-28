@@ -218,9 +218,10 @@ void handle_user_menu(LibrarySystem& system)
   };
   auto const search_book = [&system, &input]
   {
-    Book::id_type book_id{};
-    input.prompt("Enter book ID to search: ").get(whitespace, book_id);
-    Book const * const book = system.search_book_by_id(book_id);
+    Book::string_type book_title{};
+    std::cout << "Enter book title to search: " ;
+    input.get(getline_t{book_title});
+    Book const * const book = system.search_book_by_title(book_title);
     if (book == nullptr) {
       std::cout << "Book not found.\n";
       return;

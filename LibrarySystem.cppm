@@ -413,6 +413,16 @@ public:
     }
     return nullptr;
   }
+    auto search_book_by_title(Book::string_type book_title) noexcept -> Book*
+  {
+    // Perform sort before searching
+    Algorithms::quick_sort(std::span{m_books}, {}, &Book::get_title);
+    size_t const index = Algorithms::binary_search(std::span{std::as_const(m_books)}, book_title, {}, &Book::get_title);
+    if (index != -1zu) {
+      return &m_books[index];
+    }
+    return nullptr;
+  }
   auto borrow_book(Book::id_type book_id, User::string_view user_id) -> bool
   {
     size_t const index = Algorithms::binary_search(std::span{std::as_const(m_books)}, book_id, {}, &Book::get_id);

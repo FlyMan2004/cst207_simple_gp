@@ -297,12 +297,12 @@ public:
       "{:>70}=== All Books ===\n",
       ""
     );
-    std::string const ID_string = std::format("{:<36}", "ID");
+    std::string const ID_string = std::format("{:<30}", "ID");
     std::cout << std::format(
       Book::fmt_string,
       ID_string, "Title", "Author", "Category", "Status"
     ) << '\n';
-    std::cout << std::format("{:->145}\n", "");
+    std::cout << std::format("{:->135}\n", "");
 
     for (const auto& book : m_books) {
       std::cout << std::format(
@@ -339,14 +339,14 @@ public:
  
     std::cout << std::format(
     "\n"
-      "{:>70}=== Sorted Books ({}) ===\n",
-      sort_by
+      "{:>60}=== Sorted Books ({}) ===\n",
+      "", sort_by
     );
     std::cout << std::format(
       Book::fmt_string,
       "ID", "Title", "Author", "Category", "Status"
     ) << '\n';
-    std::cout << std::format("{:->145}\n", "");
+    std::cout << std::format("{:->90}\n", "");
 
     for (const auto& book : books.get()) {
       std::cout << std::format(
@@ -369,13 +369,14 @@ public:
 
     std::cout << std::format(
       "\n"
-      "\t\t\t\t=== Transaction Records ===\n"
+      "{:>50}=== Transaction Records ===\n",
+      ""
     );
     std::cout << std::format(
       Transaction::fmt_string,
       "Receipt", "User name", "Book ID", "Date", "Type"
     ) << '\n';
-    std::cout << std::format("{:->14}\n", "");
+    std::cout << std::format("{:->80}\n", "");
 
     for (const auto& trans : m_transactions) {
       std::cout << std::format(

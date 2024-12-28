@@ -1,6 +1,7 @@
 module;
 #include <string>
 #include <string_view>
+#include <expected>
 #include <chrono>
 #include <iostream>
 #include <utility>
@@ -386,20 +387,22 @@ public:
     }
   }
 
-  auto modify_book(Book::id_type book_id, Book new_book_info) -> bool
+  auto book_to_modify(Book::id_type book_id) noexcept -> std::expected<std::vector<Book>::iterator, std::string>
   {
-    if (!m_curr_user || !m_curr_user->is_admin()) {
-      throw LibraryException("Unauthorized access");
+    using namespace std::string_literals;
+    if (!m_curr_user || !this->m_curr_user->is_admin()) {
+      return std::unexpected("Unauthorized access"s);
     }
     size_t const index = Algorithms::binary_search(std::span{std::as_const(m_books)}, book_id, {}, &Book::get_id);
     using difference_type = decltype(m_books)::difference_type;
     auto const book_it = m_books.begin() + static_cast<difference_type>(index);
-    if (book_it != m_books.end() && book_it->is_available()) {
-      *book_it = std::move(new_book_info);
-      save_books();
-      return true;
+    if (book_it == m_books.end()) {
+      return std::unexpected("Book not found"s);
     }
-    return false;
+    if (!book_it->is_available()) {
+      return std::unexpected("Book is not available"s);
+    }
+    return book_it;
   }
 
   // User Functions

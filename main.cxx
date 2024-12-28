@@ -119,18 +119,20 @@ void handle_admin_menu(LibrarySystem& system)
   auto const modify_book = [&system, &input]
   {
     Book::id_type book_id{};
-    Book::string_type title, author, category;
     input.prompt("Enter Book ID to edit: ").get(whitespace, book_id);
+
+    auto const book_iter = system.book_to_modify(book_id);
+    if (!book_iter.has_value()) {
+      std::println("Error: {}", book_iter.error());
+      return;
+    }
+    Book::string_type title, author, category;
     input.prompt("Enter new Title: ").get(getline_t{title});
     input.prompt("Enter new Author: ").get(getline_t{author});
     input.prompt("Enter new Category: ").get(getline_t{category});
-
-    Book newDetails(book_id, std::move(title), std::move(author), std::move(category));
-    if (system.modify_book(book_id, std::move(newDetails))) {
-      std::cout << "Book modified successfully!\n";
-    } else {
-      std::cout << "Book not found or unavailable.\n";
-    }
+    Book new_details(book_id, std::move(title), std::move(author), std::move(category));
+    *book_iter.value() = std::move(new_details);
+    std::println("Book modified successfully!");
   };
   auto const remove_book = [&system, &input]
   {

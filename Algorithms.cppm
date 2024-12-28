@@ -1,6 +1,7 @@
 module;
 #include <vector>
 #include <span>
+#include <iterator>
 #include <functional>
 #include <utility>
 export module Algorithms;
@@ -89,19 +90,26 @@ constexpr inline quick_sort_fn quick_sort{};
 // Selection Sort
 struct selection_sort_fn
 {
-  template <typename T>
-  static void operator()(std::vector<T>& book_list) noexcept
+  template <
+    typename T,
+    typename Proj = std::identity,
+    typename Comp = std::ranges::less
+  > requires std::sortable<std::ranges::iterator_t<std::span<T>>, Comp, Proj>
+  static constexpr void operator()(
+    std::span<T> elements,
+    Comp comp = {},
+    Proj proj = {}
+  )
   {
-    size_t const n = book_list.size();
-    for (size_t i = 0; i < n - 1; i++) {
+    for (size_t i = 0; i < elements.size() - 1; i++) {
       size_t min_idx = i;
-      for (size_t j = i + 1; j < n; j++) {
-        if (book_list[j].get_id() < book_list[min_idx].get_id()) {
+      for (size_t j = i + 1; j < elements.size(); j++) {
+        if (std::invoke(comp, std::invoke(proj, elements[j]), std::invoke(proj, elements[min_idx]))) {
           min_idx = j;
         }
       }
       if (min_idx != i) {
-        std::swap(book_list[i], book_list[min_idx]);
+        std::ranges::swap(elements[i], elements[min_idx]);
       }
     }
   }
@@ -158,7 +166,7 @@ struct binary_search_fn
     }
     return first != end && std::invoke(proj, *first) == key ?
       static_cast<std::size_t>(first - elements.begin()) :
-      -1;
+      std::ranges::distance(elements);
   }
 };
 constexpr inline binary_search_fn binary_search{};
@@ -172,7 +180,7 @@ struct linear_search_fn
         return i;
       }
     }
-    return -1;
+    return std::ranges::distance(elements);
   }
 };
 constexpr inline linear_search_fn linear_search{};

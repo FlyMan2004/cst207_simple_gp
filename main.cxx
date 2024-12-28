@@ -118,8 +118,16 @@ void handle_admin_menu(LibrarySystem& system)
   };
   auto const modify_book = [&system, &input]
   {
+  #define ON_INVALID_INPUT(...) \
+  try { __VA_ARGS__; } \
+  catch (LibraryException const& e) { \
+    std::println("Invalid input!"); \
+    (void)input.reset(); \
+    return; \
+  }
+
     Book::id_type book_id{};
-    input.prompt("Enter Book ID to edit: ").get(whitespace, book_id);
+    ON_INVALID_INPUT( input.prompt("Enter Book ID to edit: ").get(whitespace, book_id) )
 
     auto const book_iter = system.book_to_modify(book_id);
     if (!book_iter.has_value()) {
@@ -127,22 +135,34 @@ void handle_admin_menu(LibrarySystem& system)
       return;
     }
     Book::string_type title, author, category;
-    input.prompt("Enter new Title: ").get(getline_t{title});
-    input.prompt("Enter new Author: ").get(getline_t{author});
-    input.prompt("Enter new Category: ").get(getline_t{category});
+    ON_INVALID_INPUT( input.prompt("Enter new Title: ").get(getline_t{title}) )
+    ON_INVALID_INPUT( input.prompt("Enter new Author: ").get(getline_t{author}) )
+    ON_INVALID_INPUT( input.prompt("Enter new Category: ").get(getline_t{category}) )
     Book new_details(book_id, std::move(title), std::move(author), std::move(category));
     *book_iter.value() = std::move(new_details);
     std::println("Book modified successfully!");
+
+  #undef ON_INVALID_INPUT
   };
   auto const remove_book = [&system, &input]
   {
+  #define ON_INVALID_INPUT(...) \
+  try { __VA_ARGS__; } \
+  catch (LibraryException const& e) { \
+    std::println("Invalid input!"); \
+    (void)input.reset(); \
+    return; \
+  }
+
     Book::id_type book_id{};
-    input.prompt("Enter Book ID to delete: ").get(whitespace, book_id);
+    ON_INVALID_INPUT( input.prompt("Enter Book ID to delete: ").get(whitespace, book_id) )
     if (system.remove_book(book_id)) {
       std::cout << "Book removed successfully!\n";
     } else {
       std::cout << "Book not found or unavailable.\n";
     }
+
+  #undef ON_INVALID_INPUT
   };
   auto const view_user_transactions = [&system, &input]
   {
@@ -220,9 +240,17 @@ void handle_user_menu(LibrarySystem& system)
   };
   auto const search_book = [&system, &input]
   {
+  #define ON_INVALID_INPUT(...) \
+  try { __VA_ARGS__; } \
+  catch (LibraryException const& e) { \
+    std::println("Invalid input!"); \
+    (void)input.reset(); \
+    return; \
+  }
+
     Book::string_type book_title{};
     std::cout << "Enter book title to search: " ;
-    input.get(getline_t{book_title});
+    ON_INVALID_INPUT( input.get(getline_t{book_title}) )
     Book const * const book = system.search_book_by_title(book_title);
     if (book == nullptr) {
       std::cout << "Book not found.\n";
@@ -241,6 +269,8 @@ void handle_user_menu(LibrarySystem& system)
       book->get_category(),
       book->is_available() ? "Available" : "Borrowed"
     );
+
+  #undef ON_INVALID_INPUT
   };
   auto const borrow_book = [&system, &input]
   {
@@ -248,11 +278,13 @@ void handle_user_menu(LibrarySystem& system)
     [[assume(current_user != nullptr)]]; // Assume that the current user is not null
 
     Book::id_type book_id{};
+    std::vector<std::reference_wrapper<Transaction const>> transaction_list;
     while (true) {
       try {
         input.prompt("Enter Book ID (Enter ESC to end): ").get(whitespace, ESC, book_id);
-        bool const borrowed = system.borrow_book(book_id, current_user->get_username());
-        if (borrowed) {
+        auto const transaction_iter = system.borrow_book(book_id, current_user->get_username());
+        if (transaction_iter.has_value()) {
+          transaction_list.push_back(transaction_iter.value());
           std::cout << "Book borrowed successfully!\n";
         } else {
           std::cout << "Failed to borrow book. Book may not exist or is already borrowed.\n";
@@ -261,7 +293,28 @@ void handle_user_menu(LibrarySystem& system)
       } catch (ESC_pressed const&) {
         (void)input.reset();
         break;
+      } catch (LibraryException const& e) {
+        std::println("Invalid input!");
+        (void)input.reset();
+        break;
       }
+    }
+    Algorithms::quick_sort(std::span{transaction_list}, {}, &Transaction::get_book_id);
+    if (transaction_list.empty()) {
+      std::cout << "No transactions found.\n";
+      return;
+    }
+    for (Transaction const& trans : transaction_list) {
+      std::cout << std::format(
+        "Receipt: {}\n"
+        "   Book: {}\n"
+        "   Date: {}\n"
+        "   Type: {}\n",
+        trans.get_receipt_number(),
+        trans.get_book_id(),
+        trans.get_date(),
+        trans.has_returned() ? "Return" : "Borrow"
+      );
     }
   };
   auto const view_history = [&system]
@@ -274,10 +327,11 @@ void handle_user_menu(LibrarySystem& system)
     [[assume(current_user != nullptr)]]; // Assume that the current user is not null
 
     Book::id_type book_id{};
+    std::vector<std::reference_wrapper<Transaction const>> transaction_list;
     while (true) {
       try {
         input.prompt("Enter Book ID (Enter ESC to end): ").get(whitespace, ESC, book_id);
-        bool const returned = system.return_book(book_id, current_user->get_username());
+        auto const returned = system.return_book(book_id, current_user->get_username());
         if (returned) {
           std::cout << "Book returned successfully!\n";
         } else {
@@ -287,7 +341,28 @@ void handle_user_menu(LibrarySystem& system)
       } catch (ESC_pressed const&) {
         (void)input.reset();
         break;
+      } catch (LibraryException const& e) {
+        std::println("Invalid input!");
+        (void)input.reset();
+        break;
       }
+    }
+    Algorithms::quick_sort(std::span{transaction_list}, {}, &Transaction::get_book_id);
+    if (transaction_list.empty()) {
+      std::cout << "No transactions found.\n";
+      return;
+    }
+    for (Transaction const& trans : transaction_list) {
+      std::cout << std::format(
+        "Receipt: {}\n"
+        "   Book: {}\n"
+        "   Date: {}\n"
+        "   Type: {}\n",
+        trans.get_receipt_number(),
+        trans.get_book_id(),
+        trans.get_date(),
+        trans.has_returned() ? "Return" : "Borrow"
+      );
     }
   };
 

@@ -14,7 +14,7 @@ struct merge_sort_fn
   template <typename T>
   static void operator()(std::vector<T>& book_list, size_t left, size_t right) noexcept
   {
-    if (left >= right) return;
+    if (right - left <= 1) return;
 
     size_t const mid = left + (right - left) / 2;
     merge_sort_fn{}(book_list, left, mid);

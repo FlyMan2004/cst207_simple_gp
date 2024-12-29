@@ -123,10 +123,14 @@ struct bubble_sort_fn
   {
     size_t const n = book_list.size();
     for (size_t i = 0; i < n - 1; i++) {
+      bool swapped = false;
       for (size_t j = 0; j < n - i - 1; j++) {
-        if (book_list[j].get_title() > book_list[j + 1].get_title())
+        if (book_list[j].get_title() > book_list[j + 1].get_title()) {
           std::swap(book_list[j], book_list[j + 1]);
+          swapped = true;
+        }
       }
+      if (!swapped) break;
     }
   }
 };

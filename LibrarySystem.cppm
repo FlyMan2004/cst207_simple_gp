@@ -462,7 +462,7 @@ public:
     size_t const index = Algorithms::binary_search(std::span{std::as_const(m_books)}, book_id, {}, &Book::get_id);
     using difference_type = decltype(this->m_books)::difference_type;
     auto const book_iter = this->m_books.begin() + static_cast<difference_type>(index);
-    if (book_iter != this->m_books.end() && book_iter->is_available()) {
+    if (book_iter != this->m_books.end() && !book_iter->is_available()) {
       book_iter->set_availability(true);
       using receipt_id_type = Transaction::receipt_id_type;
       auto receipt_id = receipt_id_type{receipt_id_type::gen_t{}};

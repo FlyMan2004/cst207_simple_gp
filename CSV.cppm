@@ -346,6 +346,7 @@ public:
       }
       new_file << '\n';
     }
+    new_file.close();
     /* Finished. Clear the flag. */
     this->m_modified = false;
     /* Replace old file with new file */

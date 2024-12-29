@@ -91,8 +91,8 @@ public:
   {}
   ~User() = default;
 
-  [[nodiscard]] auto authenticate(string_view input_passwd, bool priviledge = false) const noexcept -> bool
-  { return this->is_admin() == priviledge && m_password == input_passwd; }
+  [[nodiscard]] auto authenticate(string_view input_passwd, bool priviledged = false) const noexcept -> bool
+  { return this->is_admin() == priviledged && m_password == input_passwd; }
   [[nodiscard]] auto is_admin() const noexcept -> bool { return m_is_admin; }
   [[nodiscard]] auto get_username() const noexcept -> string_view { return m_username; }
 }; // class User
@@ -241,10 +241,10 @@ private:
   }
 
 public:
-  auto login(std::string_view username, std::string_view password, bool priviledge = false) noexcept -> bool
+  auto login(std::string_view username, std::string_view password, bool priviledged = false) noexcept -> bool
   {
     for (auto const& user : m_users) {
-      if (user.get_username() == username && user.authenticate(password, priviledge)) {
+      if (user.get_username() == username && user.authenticate(password, priviledged)) {
         m_curr_user = &user;
         return true;
       }

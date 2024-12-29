@@ -331,8 +331,9 @@ void handle_user_menu(LibrarySystem& system)
     while (true) {
       try {
         input.prompt("Enter Book ID (Enter ESC to end): ").get(whitespace, ESC, book_id);
-        auto const returned = system.return_book(book_id, current_user->get_username());
-        if (returned) {
+        auto const transaction_iter = system.return_book(book_id, current_user->get_username());
+        if (transaction_iter.has_value()) {
+          transaction_list.push_back(transaction_iter.value());
           std::cout << "Book returned successfully!\n";
         } else {
           std::cout << "Failed to return book. Book may not exist or is not borrowed by you.\n";

@@ -187,7 +187,7 @@ private:
   void save_books()
   {
     Algorithms::merge_sort(this->m_books, 0, m_books.size() - 1);
-    m_books_file.clear_records(false);
+    m_books_file.clear_records();
     for (const auto& book : m_books) {
       m_books_file.append_record(
         book.get_id(),
@@ -214,7 +214,7 @@ private:
 
   void save_transactions()
   {
-    m_transactions_file.clear_records(false);
+    m_transactions_file.clear_records();
     for (auto const& trans : m_transactions) {
       m_transactions_file.append_record(
         trans.get_receipt_number(),

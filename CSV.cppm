@@ -232,11 +232,11 @@ public:
   }
 
   /* Clear all records. A checkout point */
-  void clear_records(bool requires_checkout = true)
+  void clear_records()
   {
     this->m_modified = true;
     this->m_records.clear();
-    if (requires_checkout) this->save_changes();
+    this->save_changes();
   }
 
   template <parsable_to_string... Ts>

@@ -25,16 +25,16 @@ struct merge_sort_fn
 
     while (i <= mid && j <= right) {
       if (book_list[i].get_id() <= book_list[j].get_id())
-        temp[k++] = book_list[i++];
+        temp[k++] = std::move(book_list[i++]);
       else
-        temp[k++] = book_list[j++];
+        temp[k++] = std::move(book_list[j++]);
     }
 
-    while (i <= mid) temp[k++] = book_list[i++];
-    while (j <= right) temp[k++] = book_list[j++];
+    while (i <= mid) temp[k++] = std::move(book_list[i++]);
+    while (j <= right) temp[k++] = std::move(book_list[j++]);
 
     for (i = 0; i < k; i++)
-      book_list[left + i] = temp[i];
+      book_list[left + i] = std::move(temp[i]);
   }
 };
 constexpr inline merge_sort_fn merge_sort{};

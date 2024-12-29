@@ -24,17 +24,17 @@ struct merge_sort_fn
     size_t i = left, j = mid, k = 0;
 
     while (i < mid && j < right) {
-      if (book_list[i].get_id() <= book_list[j].get_id())
-        temp[k++] = std::move(book_list[i++]);
+      if (book_list.at(i).get_id() <= book_list.at(j).get_id())
+        temp.at(k++) = std::move(book_list.at(i++));
       else
-        temp[k++] = std::move(book_list[j++]);
+        temp.at(k++) = std::move(book_list.at(j++));
     }
 
-    while (i < mid) temp[k++] = std::move(book_list[i++]);
-    while (j < right) temp[k++] = std::move(book_list[j++]);
+    while (i < mid) temp.at(k++) = std::move(book_list.at(i++));
+    while (j < right) temp.at(k++) = std::move(book_list.at(j++));
 
     for (i = 0; i < temp.size(); i++)
-      book_list[left + i] = std::move(temp[i]);
+      book_list.at(left + i) = std::move(temp.at(i));
   }
 };
 constexpr inline merge_sort_fn merge_sort{};
@@ -125,7 +125,7 @@ struct bubble_sort_fn
     for (size_t i = 0; i < n - 1; i++) {
       bool swapped = false;
       for (size_t j = 0; j < n - i - 1; j++) {
-        if (book_list[j].get_title() > book_list[j + 1].get_title()) {
+        if (book_list.at(j).get_title() > book_list.at(j + 1).get_title()) {
           std::swap(book_list[j], book_list[j + 1]);
           swapped = true;
         }

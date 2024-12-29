@@ -18,22 +18,22 @@ struct merge_sort_fn
 
     size_t const mid = left + (right - left) / 2;
     merge_sort_fn{}(book_list, left, mid);
-    merge_sort_fn{}(book_list, mid + 1, right);
+    merge_sort_fn{}(book_list, mid, right);
 
-    std::vector<T> temp(right - left + 1);
-    size_t i = left, j = mid + 1, k = 0;
+    std::vector<T> temp(right - left);
+    size_t i = left, j = mid, k = 0;
 
-    while (i <= mid && j <= right) {
+    while (i < mid && j < right) {
       if (book_list[i].get_id() <= book_list[j].get_id())
         temp[k++] = std::move(book_list[i++]);
       else
         temp[k++] = std::move(book_list[j++]);
     }
 
-    while (i <= mid) temp[k++] = std::move(book_list[i++]);
-    while (j <= right) temp[k++] = std::move(book_list[j++]);
+    while (i < mid) temp[k++] = std::move(book_list[i++]);
+    while (j < right) temp[k++] = std::move(book_list[j++]);
 
-    for (i = 0; i < k; i++)
+    for (i = 0; i < temp.size(); i++)
       book_list[left + i] = std::move(temp[i]);
   }
 };
@@ -55,7 +55,7 @@ struct quick_sort_fn
     auto const size = elements.size();
     if (size <= 1) return;
     static constexpr auto partition =
-    []<typename T>(std::span<T> elements, Comp comp, Proj proj) static -> size_t
+    [](std::span<Element> elements, Comp comp, Proj proj) static -> size_t
     {
       /* select pivot index */
       size_t const pivot_index = elements.size() / 2;
@@ -180,7 +180,7 @@ struct linear_search_fn
   static auto operator()(std::span<T> elements, T const& key) -> size_t
   {
     for (size_t i = 0; i < elements.size(); ++i) {
-      if (elements[i] == key) {
+      if (elements.at(i) == key) {
         return i;
       }
     }

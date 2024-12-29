@@ -2,8 +2,12 @@
 
 CXX := clang++
 CXXFLAGS := -pipe -std=gnu++23 -fsized-deallocation -Wall -Wextra -fprebuilt-module-path=. -flto=thin
+# On Linux
 LDFLAGS := -fuse-ld=lld -lstdc++exp -luuid
 SANITIZER := -fsanitize=address,undefined
+# On Windows with msys2 ucrt64
+# LDFLAGS := -fuse-ld=lld -lstdc++exp -lrpcrt4
+# SANITIZER :=
 DEBUGFLAGS := -Og -fno-omit-frame-pointer -gdwarf-5 -glldb
 RELEASEFLAGS := -O3 -march=native -DNDEBUG
 OPTIMIZATION := $(DEBUGFLAGS)

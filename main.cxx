@@ -287,7 +287,7 @@ void handle_user_menu(LibrarySystem& system)
           transaction_list.push_back(transaction_iter.value());
           std::cout << "Book borrowed successfully!\n";
         } else {
-          std::cout << "Failed to borrow book. Book may not exist or is already borrowed.\n";
+          std::cout << "Failed to borrow book. " << transaction_iter.error() << '\n';
           break;
         }
       } catch (ESC_pressed const&) {
@@ -336,7 +336,7 @@ void handle_user_menu(LibrarySystem& system)
           transaction_list.push_back(transaction_iter.value());
           std::cout << "Book returned successfully!\n";
         } else {
-          std::cout << "Failed to return book. Book may not exist or is not borrowed by you.\n";
+          std::cout << "Failed to return book. " << transaction_iter.error() << '\n';
           break;
         }
       } catch (ESC_pressed const&) {
@@ -512,18 +512,21 @@ static auto test_my_quick_sort() -> int
 [[maybe_unused]] static auto test_my_binary_search() -> int __asm__("test_my_binary_search");
 static auto test_my_binary_search() -> int
 {
-  std::vector<int> const vec{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  std::vector<int> const vec{1, 2, 3, 4, 5, 6, 7, 8, 9};
   // std::cout << "Searching for 5: " << Algorithms::binary_search(std::span{vec}, 5) << '\n';
   // std::cout << "Searching for 11: " << Algorithms::binary_search(std::span{vec}, 11) << '\n';
-  auto const search_5_result = Algorithms::binary_search(std::span{vec}, 5);
-  std::println(
-    "Searching for 5: {}",
-    search_5_result != size_t(-1) ? std::format("Found at index {}", search_5_result) : "Not found"
-  );
+  for (auto const v : vec) {
+    auto const result = Algorithms::binary_search(std::span{vec}, v);
+    std::println(
+      "Searching for {}: {}",
+      v,
+      result != size(vec) ? std::format("Found at index {}", result) : "Not found"
+    );
+  }
   auto const search_11_result = Algorithms::binary_search(std::span{vec}, 11);
   std::println(
     "Searching for 11: {}",
-    search_11_result != size_t(-1) ? std::format("Found at index {}", search_11_result) : "Not found"
+    search_11_result != size(vec) ? std::format("Found at index {}", search_11_result) : "Not found"
   );
   return 0;
 }

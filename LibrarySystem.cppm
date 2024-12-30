@@ -186,7 +186,7 @@ private:
   // Add save and load functions
   void save_books()
   {
-    Algorithms::merge_sort(this->m_books, 0, m_books.size() - 1);
+    Algorithms::merge_sort(this->m_books, 0, m_books.size());
     m_books_file.clear_records();
     for (const auto& book : m_books) {
       m_books_file.append_record(
@@ -327,7 +327,7 @@ public:
     auto books = std::ref(m_books);
     if (sort_by == "m_id") {
       size_t const left = 0;
-      size_t const right = books.get().size() - 1;
+      size_t const right = books.get().size();
       Algorithms::merge_sort(books.get(), left, right);
     } else if (sort_by == "m_title") {
       books_copy = m_books;
@@ -430,12 +430,13 @@ public:
   auto search_book_by_title(Book::string_type const& book_title) noexcept -> Book*
   {
     // Perform sort before searching
-    Algorithms::quick_sort(std::span{m_books}, {}, &Book::get_title);
-    size_t const index = Algorithms::binary_search(std::span{std::as_const(m_books)}, book_title, {}, &Book::get_title);
-    using difference_type = decltype(this->m_books)::difference_type;
-    auto const book_iter = this->m_books.begin() + static_cast<difference_type>(index);
-    if (book_iter != this->m_books.end()) {
-      return &(*book_iter);
+    std::vector<std::reference_wrapper<Book const>> books_ref(m_books.cbegin(), m_books.cend());
+    Algorithms::quick_sort(std::span{books_ref}, {}, &Book::get_title);
+    size_t const index = Algorithms::binary_search(std::span{std::as_const(books_ref)}, book_title, {}, &Book::get_title);
+    using difference_type = decltype(books_ref)::difference_type;
+    auto const book_iter = books_ref.begin() + static_cast<difference_type>(index);
+    if (book_iter != books_ref.end()) {
+      return const_cast<Book*>(&(book_iter->get()));
     }
     return nullptr;
   }
@@ -445,16 +446,18 @@ public:
     size_t const index = Algorithms::binary_search(std::span{std::as_const(m_books)}, book_id, {}, &Book::get_id);
     using difference_type = decltype(this->m_books)::difference_type;
     auto const book_iter = this->m_books.begin() + static_cast<difference_type>(index);
-    if (book_iter != this->m_books.end() && book_iter->is_available()) {
-      book_iter->set_availability(false);
-      using receipt_id_type = Transaction::receipt_id_type;
-      auto receipt_id = receipt_id_type{receipt_id_type::gen_t{}};
-      m_transactions.emplace_back(receipt_id, User::string_type(user_id), book_id, false);
-      save_books();
-      save_transactions();
-      return this->m_transactions.back();
-    }
-    return std::unexpected{"No such book"};
+    if (book_iter == this->m_books.end())
+      return std::unexpected{"No such book"};
+    if (!book_iter->is_available())
+      return std::unexpected{"Book is not available"};
+
+    book_iter->set_availability(false);
+    using receipt_id_type = Transaction::receipt_id_type;
+    auto receipt_id = receipt_id_type{receipt_id_type::gen_t{}};
+    m_transactions.emplace_back(receipt_id, User::string_type(user_id), book_id, false);
+    save_books();
+    save_transactions();
+    return this->m_transactions.back();
   }
 
   auto return_book(Book::id_type book_id, User::string_view user_id) -> std::expected<std::reference_wrapper<Transaction const>, std::string>
@@ -462,16 +465,18 @@ public:
     size_t const index = Algorithms::binary_search(std::span{std::as_const(m_books)}, book_id, {}, &Book::get_id);
     using difference_type = decltype(this->m_books)::difference_type;
     auto const book_iter = this->m_books.begin() + static_cast<difference_type>(index);
-    if (book_iter != this->m_books.end() && !book_iter->is_available()) {
-      book_iter->set_availability(true);
-      using receipt_id_type = Transaction::receipt_id_type;
-      auto receipt_id = receipt_id_type{receipt_id_type::gen_t{}};
-      m_transactions.emplace_back(receipt_id, User::string_type(user_id), book_id, true);
-      save_books();
-      save_transactions();
-      return this->m_transactions.back();
-    }
-    return std::unexpected{"No such book"};
+    if (book_iter == this->m_books.end())
+      return std::unexpected{"No such book"};
+    if (book_iter->is_available())
+      return std::unexpected{"Book is not borrowed"};
+
+    book_iter->set_availability(true);
+    using receipt_id_type = Transaction::receipt_id_type;
+    auto receipt_id = receipt_id_type{receipt_id_type::gen_t{}};
+    m_transactions.emplace_back(receipt_id, User::string_type(user_id), book_id, true);
+    save_books();
+    save_transactions();
+    return this->m_transactions.back();
   }
 
   void view_transactions_of(std::string_view user_id) const noexcept
